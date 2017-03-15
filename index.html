@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+	  	<meta charset="utf-8">
+	  	<title>Whatsapp Web</title>
+	  	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	  	<meta name="viewport" content="width=device-width, initial-scale=1">
+	  	<link rel="shortcut icon" href="image/favicon.png" type="image/png">
+	  	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,600%7CRoboto:300,400,500" media="all">
+	  	<link href="css/bootstrap.min.css" rel="stylesheet">
+	  	<link href="css/icomoon.css" rel="stylesheet">
+	  	<link href="css/font-awesome.min.css" rel="stylesheet">
+	  	<link href="css/main.css" rel="stylesheet">
+	  	<link href="css/queries.css" rel="stylesheet">
+	</head>
+	<body onload="init()">
+	  	
+	  	<ul id="lista-usuarios"></ul>
+	  	<input id="name" type="text">
+	  	<button id="btn-ingresar" class="btn btn-success">Ingresar</button>
+	  	
+	  	<script src="js/jquery-3.1.1.js"></script>
+		<script type="text/javascript" src="js/backup.js"></script>
+		<script src='http://services.geekadvice.pe:4000/socket.io/socket.io.js'></script>
+		<script>
+            var socket;
+            window.onload = function() {
+                socket=io.connect('http://services.geekadvice.pe:4000');
+                
+                socket.on('list_users', function(_users){
+                    console.log(_users); 
+                    drawUsers(_users);
+            });
+            
+            socket.on('new_user', function(_user){
+                $('#lista-usuarios').append('<li>'+_user.name+'</li>');
+            });
+                
+            $('#btn-ingresar').click(identificar);
+                
+            function drawUsers(_users){
+                var lista = $('#lista-usuarios');
+                for (var i in _users){
+                    lista.append('<li>'+_users[i].name+'</li>');
+                }
+            }
+            
+            function identificar() {
+                socket.emit('identify', $('#name').val());
+            }
+                
+            }
+        </script>
+	</body>
+</html>
